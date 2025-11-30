@@ -1,0 +1,77 @@
+# =============================================================
+#  KPI INTELLIGENCE SYSTEM — CONFIG FOR YOUR REAL DATASET
+# =============================================================
+
+# -----------------------------
+# MAIN KPI SETTINGS
+# -----------------------------
+kpi_column: "Revenue_d"             # main KPI in your dataset
+rolling_window_days: 7
+pct_change_threshold: 0.12          # alert when KPI drops > 12%
+
+# -----------------------------
+# DIMENSION COLUMNS
+# -----------------------------
+date_column: "Date"
+category_column: "Category"
+product_column: "Product_Name"
+subcategory_column: "Sub_category"
+
+# -----------------------------
+# EXTRA NUMERIC METRICS FOR CAUSAL ANALYSIS
+# -----------------------------
+extra_numeric_candidates:
+  - Sales_d
+  - Discount
+  - Rating
+  - M_Spend
+  - Supply_Chain_E
+  - Market_T
+  - Seasonality_T
+  - Success_Percentage
+
+# -----------------------------
+# SYSTEM MODE
+# -----------------------------
+mode: fast
+use_llm_analysis: false
+use_llm_actions: true
+llm_model: "mistral:7b-instruct-q4_K_M"
+        # fast / silent / llm
+
+# -----------------------------
+# OLLAMA CONFIG
+# -----------------------------
+ollama_url: "http://localhost:11434/api/generate"
+ollama_model: "mistral:latest"
+llm_timeout_seconds: 180
+
+# -----------------------------
+# ALERT SETTINGS 
+# -----------------------------
+enable_zscore: true
+zscore_threshold: 2.0
+
+enable_pct_change: true
+pct_drop_threshold: 0.10
+
+enable_baseline_comparison: true
+
+# -----------------------------
+# FILE PATH SETTINGS
+# -----------------------------
+raw_data_path: "data/raw/kpi_data.csv"
+processed_data_path: "data/processed/kpi.parquet"
+
+alerts_output_path: "output/alerts_log.csv"
+recommendations_output_path: "output/recommendations.csv"
+
+# -----------------------------
+# DASHBOARD SETTINGS
+# -----------------------------
+default_trend_days: 14
+
+# -----------------------------
+# CHATBOT SETTINGS
+# -----------------------------
+chat_memory_length: 5

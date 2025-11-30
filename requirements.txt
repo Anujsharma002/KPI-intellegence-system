@@ -1,0 +1,9 @@
+pandas>=1.5
+pyarrow
+scikit-learn
+numpy
+pyyaml
+typer
+python-dotenv
+# CrewAI (if available)
+crewai>=0.0.0

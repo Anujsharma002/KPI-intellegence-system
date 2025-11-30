@@ -1,0 +1,24 @@
+drop_in_sales_m:
+  description: "Significant drop in sales_m"
+  actions:
+    - "Increase targeted marketing to affected segments for 7 days"
+    - "Run A/B test on checkout flow for affected SKUs"
+    - "Check recent price changes or catalog issues"
+
+high_discount_spike:
+  description: "Large increase in discounts"
+  actions:
+    - "Review discount campaigns & correct if misconfigured"
+    - "Assess impact vs margin and pause low-ROI discounts"
+
+drop_in_traffic:
+  description: "Traffic drop"
+  actions:
+    - "Check acquisition channels (ads, organic)"
+    - "Check analytics tracking tags for regressions"
+
+low_ratings:
+  description: "Customer ratings fell"
+  actions:
+    - "Investigate recent product/fulfillment issues"
+    - "Reach out to support for top complaints"
