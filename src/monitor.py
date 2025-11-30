@@ -1,4 +1,3 @@
-# src/monitor.py
 import pandas as pd
 from pathlib import Path
 from src.utils import load_config, save_csv
@@ -52,12 +51,10 @@ def detect_alerts(processed_path: str):
     if not Path(processed_path).exists():
         raise FileNotFoundError(f"Processed dataset not found: {processed_path}")
 
-    # Load data
     df = pd.read_parquet(processed_path)
     df[date_col] = pd.to_datetime(df[date_col])
     df = df.sort_values(date_col)
 
-    # Rolling stats
     df["rolling_mean"] = df[kpi_col].rolling(window).mean()
     df["rolling_std"] = df[kpi_col].rolling(window).std()
 
@@ -76,13 +73,10 @@ def detect_alerts(processed_path: str):
 
         is_alert = False
         reasons = []
-
-        # Percent-based deviation
         if enable_pct and pct_change < -pct_threshold:
             is_alert = True
             reasons.append(f"Percent drop: {pct_change:.1%}")
 
-        # Z-score deviation
         if enable_z and zscore < -z_th:
             is_alert = True
             reasons.append(f"Z-score: {zscore:.2f}")
@@ -92,7 +86,6 @@ def detect_alerts(processed_path: str):
 
         severity = classify_severity(pct_change, zscore, cfg)
 
-        # Generate human-readable text
         alert_text = (
             f"{severity} ALERT — {kpi_col} deviated on {row[date_col].date()}\n"
             f"Actual: {value:.2f} | Baseline: {baseline:.2f}\n"
@@ -100,7 +93,6 @@ def detect_alerts(processed_path: str):
             f"Reasons: {', '.join(reasons)}"
         )
 
-        # Optional LLM interpretation
         llm_msg = call_llm_for_alert(cfg, alert_text)
 
         full_message = alert_text

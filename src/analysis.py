@@ -1,4 +1,3 @@
-# src/analysis.py — FIXED FOR CUSTOM DATE COLUMN
 
 from typing import List, Dict, Any, Optional
 from pathlib import Path
@@ -79,14 +78,12 @@ def analyze_causes(processed_path: str, alerts: List[Dict[str, Any]], top_n: int
     df[date_col] = pd.to_datetime(df[date_col])
     df = df.sort_values(date_col).reset_index(drop=True)
 
-    # Candidate numeric features
     numeric_candidates = df.select_dtypes(include=[np.number]).columns.tolist()
     numeric_candidates = [c for c in numeric_candidates if c != kpi_col]
 
     extra = cfg.get("extra_numeric_candidates", [])
     numeric_candidates = list(set(numeric_candidates + extra))
 
-    # Global feature importances
     global_imps = _fit_feature_importance(df, numeric_candidates, kpi_col)
 
     results = []
@@ -115,7 +112,6 @@ def analyze_causes(processed_path: str, alerts: List[Dict[str, Any]], top_n: int
 
         ranked = sorted(cause_rows, key=lambda x: x["score"], reverse=True)[:top_n]
 
-        # Explanation
         if mode == "fast":
             expl = f"Alert {alert['alert_id']} likely due to: " + ", ".join(
                 [c["feature"] for c in ranked]
@@ -134,7 +130,6 @@ def analyze_causes(processed_path: str, alerts: List[Dict[str, Any]], top_n: int
             "explanation": expl,
         })
 
-    # Save JSON for dashboard
     Path("output").mkdir(exist_ok=True)
     with open("output/causes.json", "w") as f:
         json.dump({"causes": results}, f, indent=4)

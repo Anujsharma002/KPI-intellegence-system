@@ -1,5 +1,3 @@
-# Provides task definitions for CrewAI if you want more structured tasks.
-# CrewAI might accept Task objects; we include conceptual tasks.
 
 try:
     from crewai import Task

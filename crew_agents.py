@@ -3,9 +3,6 @@ from src.monitor import detect_alerts
 from src.analysis import analyze_causes
 from src.actions import generate_recommendations
 
-# ---------------------------------------------------------
-# Python functions (used both in CrewAI + fallback)
-# ---------------------------------------------------------
 
 def ingest_agent_fn(state):
     result = ingest(state.get("raw_path", "data/raw/kpi_data.csv"))
@@ -32,9 +29,6 @@ def actions_agent_fn(state):
     return state
 
 
-# ---------------------------------------------------------
-# CREWAI AGENTS (with Ollama LLM)
-# ---------------------------------------------------------
 
 try:
     from crewai import Agent, LLM

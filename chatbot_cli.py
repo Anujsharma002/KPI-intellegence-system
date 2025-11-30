@@ -1,6 +1,3 @@
-# ==========================================================
-#  KPI Intelligence CLI — Fully Patched / Crash-Proof
-# ==========================================================
 
 import json
 import re
@@ -15,9 +12,6 @@ from rich.text import Text
 
 console = Console()
 
-# ---------------------------------------------------------
-# CONFIG
-# ---------------------------------------------------------
 CFG = load_config("config/config.yaml")
 
 DATE_COL = CFG["date_column"]
@@ -33,10 +27,6 @@ OLLAMA_MODEL = CFG["ollama_model"]
 MEMORY_LIMIT = CFG.get("chat_memory_length", 5)
 chat_memory = []
 
-
-# ---------------------------------------------------------
-# LLM WRAPPER
-# ---------------------------------------------------------
 def call_llm(prompt):
     """Call Ollama with streaming enabled."""
     try:
@@ -58,10 +48,6 @@ def call_llm(prompt):
     except Exception as e:
         return f"[red]⚠️ LLM error: {e}[/red]"
 
-
-# ---------------------------------------------------------
-# INTENT DETECTION
-# ---------------------------------------------------------
 def detect_intent(q):
     q = q.lower()
 
@@ -79,10 +65,6 @@ def detect_intent(q):
 
     return "trend"
 
-
-# ---------------------------------------------------------
-# QUERY PARSING
-# ---------------------------------------------------------
 def parse_query_llm(question, df):
     """Let LLM extract metric/category/product."""
     categories = df[CAT_COL].dropna().unique().tolist()
@@ -117,18 +99,15 @@ def parse_query_fallback(q, df):
     q = q.lower()
     days = 14
 
-    # Extract days
     match = re.search(r"last\s+(\d+)\s+days?", q)
     if match:
         days = int(match.group(1))
 
-    # Metric
     metric = KPI_COL
     for m in CFG["extra_numeric_candidates"]:
         if m.lower() in q:
             metric = m
 
-    # Categories + products
     cats = [c for c in df[CAT_COL].dropna().unique() if c.lower() in q]
     prods = [p for p in df[PRODUCT_COL].dropna().unique() if p.lower() in q]
 
@@ -148,9 +127,6 @@ def parse_query(q):
     return parsed
 
 
-# ---------------------------------------------------------
-# PROTECTED KPI TREND ENGINE  (No crashes)
-# ---------------------------------------------------------
 def analyze(parsed):
     df = pd.read_parquet(PARQUET_PATH)
     df[DATE_COL] = pd.to_datetime(df[DATE_COL])
@@ -193,9 +169,6 @@ def analyze(parsed):
     return pct_change, current_val, baseline, None
 
 
-# ---------------------------------------------------------
-# ALERT HANDLING
-# ---------------------------------------------------------
 def show_alert(alert_id):
     alerts_path = CFG["alerts_output_path"]
     if not Path(alerts_path).exists():
@@ -220,9 +193,6 @@ def show_alert(alert_id):
     ))
 
 
-# ---------------------------------------------------------
-# CAUSAL ANALYSIS (LLM)
-# ---------------------------------------------------------
 def causal_analysis(parsed):
     df = pd.read_parquet(PARQUET_PATH).tail(parsed["days"])
     stats = df.describe().to_string()
@@ -238,9 +208,6 @@ Explain top 3 likely causal factors in bullet points.
     return call_llm(prompt)
 
 
-# ---------------------------------------------------------
-# RECOMMENDATION ENGINE (LLM)
-# ---------------------------------------------------------
 def recommend_actions(causes):
     prompt = f"""
 Based on these causes:
@@ -251,10 +218,6 @@ Generate 3 prioritized business actions.
 """
     return call_llm(prompt)
 
-
-# ---------------------------------------------------------
-# SPARKLINE
-# ---------------------------------------------------------
 def sparkline(series):
     blocks = "▁▂▃▄▅▆▇█"
     mn, mx = min(series), max(series)
@@ -262,9 +225,6 @@ def sparkline(series):
     return "".join(blocks[int((v - mn) / span * 7)] for v in series)
 
 
-# ---------------------------------------------------------
-# FULL PIPELINE WITH SAFE HANDLING
-# ---------------------------------------------------------
 def run_full_pipeline(parsed):
     pct, cur, base, err = analyze(parsed)
 
@@ -300,9 +260,6 @@ def run_full_pipeline(parsed):
         console.print("[green]KPI stable — no decline detected.[/green]")
 
 
-# ---------------------------------------------------------
-# MAIN CLI LOOP
-# ---------------------------------------------------------
 def run_cli():
     console.print(Panel(
         "[bold magenta]🤖 KPI Intelligence CLI[/bold magenta]\n"

@@ -1,4 +1,3 @@
-# dashboard.py — Optimized KPI Intelligence Dashboard
 
 import streamlit as st
 import pandas as pd
@@ -13,9 +12,6 @@ from crew_agents import (
     actions_agent_fn,
 )
 
-# --------------------------------------------------------
-# Load configuration
-# --------------------------------------------------------
 cfg = load_config()
 
 DATE_COL = cfg.get("date_column", "Date")
@@ -28,9 +24,6 @@ ALERTS_PATH = cfg.get("alerts_output_path", "output/alerts_log.csv")
 RECS_PATH = cfg.get("recommendations_output_path", "output/recommendations.csv")
 CAUSES_FILE = "output/causes.json"
 
-# --------------------------------------------------------
-# Load dataset helpers
-# --------------------------------------------------------
 def load_df():
     if Path(PARQUET_PATH).exists():
         df = pd.read_parquet(PARQUET_PATH)
@@ -44,9 +37,6 @@ def load_alerts():
 def load_recs():
     return pd.read_csv(RECS_PATH) if Path(RECS_PATH).exists() else pd.DataFrame()
 
-# --------------------------------------------------------
-# RUN FULL PIPELINE (FAST MODE)
-# --------------------------------------------------------
 def run_full_pipeline():
     st.write("🚀 Running full KPI pipeline...")
 
@@ -82,16 +72,10 @@ def run_full_pipeline():
     st.success("✅ Full pipeline completed!")
     return True
 
-# --------------------------------------------------------
-# STREAMLIT UI
-# --------------------------------------------------------
 st.set_page_config(page_title="KPI Intelligence Dashboard", layout="wide")
 st.title("📈 KPI Intelligence System")
 st.caption("Monitoring • Causal Analysis • Recommendations")
 
-# --------------------------------------------------------
-# SIDEBAR CONTROLS
-# --------------------------------------------------------
 st.sidebar.header("⚙️ Pipeline Controls")
 
 if st.sidebar.button("🚀 Run Full KPI Pipeline"):
@@ -103,9 +87,6 @@ df = load_df()
 alerts_df = load_alerts()
 recs_df = load_recs()
 
-# --------------------------------------------------------
-# KPI TREND SECTION
-# --------------------------------------------------------
 st.header("📊 KPI Trends")
 
 if df.empty:
@@ -127,12 +108,6 @@ else:
     )
     st.plotly_chart(fig, width="stretch")
 
-# --------------------------------------------------------
-# ALERTS SECTION
-# --------------------------------------------------------
-# --------------------------------------------------------
-# ALERTS SECTION (UPDATED – NO 'reason' FIELD)
-# --------------------------------------------------------
 st.header("🚨 KPI Alerts")
 
 def color_severity(level):
@@ -167,9 +142,6 @@ else:
         # NEW readable alert message
         st.info(alert["alert_message"])
 
-        # --------------------------------------------------------
-        # CAUSAL FACTORS
-        # --------------------------------------------------------
         st.subheader("🧠 Causal Analysis")
 
         import json
@@ -189,9 +161,6 @@ else:
 
         st.divider()
 
-        # --------------------------------------------------------
-        # RECOMMENDATIONS
-        # --------------------------------------------------------
         st.subheader("💡 Recommendations")
 
         match = recs_df[recs_df["alert_id"] == selected_alert]

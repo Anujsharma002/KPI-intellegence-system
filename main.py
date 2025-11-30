@@ -1,4 +1,3 @@
-# main.py
 import typer
 import sys
 import os
@@ -7,7 +6,6 @@ from src.utils import ensure_dirs
 
 ensure_dirs()
 
-# Fallback pure-python functions
 from crew_agents import (
     ingest_agent_fn,
     monitor_agent_fn,
@@ -15,7 +13,6 @@ from crew_agents import (
     actions_agent_fn,
 )
 
-# Try CrewAI
 USE_CREW = True
 try:
     import crewai
@@ -34,9 +31,6 @@ except Exception as e:
 app = typer.Typer(help="🔹 KPI Intelligence System CLI")
 
 
-# ======================================================
-#  FALLBACK PIPELINE
-# ======================================================
 def run_fallback_pipeline():
     print("[main] Running fallback sequential pipeline...")
     state = {"raw_path": "data/raw/kpi_data.csv"}
@@ -50,10 +44,6 @@ def run_fallback_pipeline():
     print("[main] Outputs written to output/*.csv")
     return state
 
-
-# ======================================================
-#  CREWAI PIPELINE
-# ======================================================
 def run_crewai_pipeline():
     print("[main] Running CrewAI pipeline...")
 
@@ -72,9 +62,6 @@ def run_crewai_pipeline():
     return result
 
 
-# ======================================================
-# CLI COMMANDS
-# ======================================================
 
 @app.command()
 def pipeline():
@@ -127,7 +114,7 @@ def chat():
     Starts the Streamlit Chatbot-style conversational UI.
     """
     print("Starting chatbot...")
-    subprocess.run(["uv", "run", "streamlit", "run", "chatbot.py"])
+    subprocess.run(["uv", "run", "chatbot_cli.py"])
 
 
 @app.command()
@@ -147,8 +134,5 @@ def info():
     typer.echo("Modes: pipeline | chat | dashboard | ingest | detect | analyze | recommend")
 
 
-# ======================================================
-# ENTRY POINT
-# ======================================================
 if __name__ == "__main__":
     app()
